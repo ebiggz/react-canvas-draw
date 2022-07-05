@@ -224,7 +224,7 @@ export default class CanvasDraw extends PureComponent {
     return imageData;
   };
 
-  loadSaveData = (saveData, immediate = this.props.immediateLoading) => {
+  loadSaveData = (saveData, immediate = this.props.immediateLoading, emitChangeEvent = true) => {
     if (typeof saveData !== "string") {
       throw new Error("saveData needs to be of type string!");
     }
@@ -244,6 +244,7 @@ export default class CanvasDraw extends PureComponent {
       this.simulateDrawingLines({
         lines,
         immediate,
+        emitChangeEvent
       });
     } else {
       // we need to rescale the lines based on saved & current dimensions
@@ -261,6 +262,7 @@ export default class CanvasDraw extends PureComponent {
           brushRadius: line.brushRadius * scaleAvg,
         })),
         immediate,
+        emitChangeEvent
       });
     }
   };
@@ -486,7 +488,7 @@ export default class CanvasDraw extends PureComponent {
       drawImage({ ctx: this.ctx.grid, img: this.image });
   };
 
-  simulateDrawingLines = ({ lines, immediate }) => {
+  simulateDrawingLines = ({ lines, immediate, emitChangeEvent }) => {
     // Simulate live-drawing of the loaded lines
     // TODO use a generator
     let curTime = 0;
@@ -506,7 +508,7 @@ export default class CanvasDraw extends PureComponent {
 
         // Save line with the drawn points
         this.points = points;
-        this.saveLine({ brushColor, brushRadius });
+        this.saveLine({ brushColor, brushRadius, emitChangeEvent });
         return;
       }
 
@@ -526,7 +528,7 @@ export default class CanvasDraw extends PureComponent {
       window.setTimeout(() => {
         // Save this line with its props instead of this.props
         this.points = points;
-        this.saveLine({ brushColor, brushRadius });
+        this.saveLine({ brushColor, brushRadius, emitChangeEvent });
       }, curTime);
     });
   };
@@ -567,7 +569,7 @@ export default class CanvasDraw extends PureComponent {
     this.ctx.temp.stroke();
   };
 
-  saveLine = ({ brushColor, brushRadius } = {}) => {
+  saveLine = ({ brushColor, brushRadius, emitChangeEvent } = {}) => {
     if (this.points.length < 2) return;
 
     // Save as new line
@@ -594,7 +596,9 @@ export default class CanvasDraw extends PureComponent {
     // Clear the temporary line-drawing canvas
     this.clearWindow(this.ctx.temp);
 
-    this.triggerOnChange();
+    if(emitChangeEvent !== false) {
+      this.triggerOnChange();
+    }
   };
 
   triggerOnChange = () => {

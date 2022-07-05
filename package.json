@@ -1,6 +1,6 @@
 {
   "name": "react-canvas-draw",
-  "version": "1.2.1",
+  "version": "1.2.2-ebiggz",
   "description": "A simple yet powerful canvas-drawing component for React.",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -19,8 +19,7 @@
     "test:watch": "nwb test-react --server",
     "deploy": "npm run build && gh-pages -d demo/dist",
     "contributors:add": "all-contributors add",
-    "contributors:generate": "all-contributors generate",
-    "prepare": "npm run build"
+    "contributors:generate": "all-contributors generate"
   },
   "dependencies": {
     "catenary-curve": "^1.0.1",
